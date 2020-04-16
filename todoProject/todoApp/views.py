@@ -1,5 +1,6 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from .models import Tasks
+from .form import TodoForm
 
 # Create your views here.
 
@@ -7,5 +8,12 @@ from .models import Tasks
 def index(request):
     task = Tasks.objects.all()
 
-    context = {'task': task}
+    form = TodoForm()
+    if request.method == 'POST':
+        form = TodoForm(request.POST)
+        if form.is_valid():
+            form.save()
+        return redirect('/')
+
+    context = {'task': task, 'form': form}
     return render(request, 'todoApp/list.html', context)
